@@ -1,0 +1,18 @@
+# Dockerfile.backend
+FROM python:3.10.7-slim
+
+
+WORKDIR /backend
+
+COPY backend_requirements.txt .
+RUN pip install --no-cache-dir -r backend_requirements.txt
+
+# Aggiungi queste linee per aggiornare markupsafe
+RUN pip install -U pip
+RUN pip install markupsafe==1.1.1
+# Installa Flask SQLAlchemy
+RUN pip install Flask-SQLAlchemy
+
+COPY backend/ .
+EXPOSE 5000
+CMD ["python", "backend.py"]
