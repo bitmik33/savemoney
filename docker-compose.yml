@@ -1,0 +1,55 @@
+version: '3.3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - backend
+      - db
+    networks:
+      - streamnet
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/backend
+    depends_on:
+      - db
+    networks:
+      - streamnet
+
+  db:
+    image: "postgres:latest"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    ports:
+      - "5432:5432"
+    networks:
+      - streamnet
+  portainer:
+    image: "portainer/portainer-ce:latest"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+    networks:
+      - streamnet
+
+
+networks:
+  streamnet:
+    driver: bridge
